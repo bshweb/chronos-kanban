@@ -1,16 +1,17 @@
 package io.github.bshweb.backend.controller;
 
-import io.github.bshweb.backend.dto.BoardDTO;
-import io.github.bshweb.backend.entity.Board;
+import io.github.bshweb.backend.dto.board.BoardResponse;
+import io.github.bshweb.backend.dto.board.CreateBoardRequest;
+import io.github.bshweb.backend.dto.board.UpdateBoardRequest;
 import io.github.bshweb.backend.service.BoardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/boards")
@@ -20,20 +21,29 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping
-    public List<BoardDTO> getAllBoards() {
-        return boardService.getAllBoards()
-                .stream()
-                .map(BoardController::toDTO)
-                .toList();
+    public ResponseEntity<List<BoardResponse>> getAllBoards() {
+        return ResponseEntity.ok(boardService.getAllBoards());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardDTO> getBoardById(@PathVariable Long id) {
-        Board board = boardService.getBoardById(id);
-        return ResponseEntity.ok(toDTO(board));
+    public ResponseEntity<BoardResponse> getBoardById(@PathVariable UUID id) {
+        return ResponseEntity.ok(boardService.getBoardById(id));
     }
 
-    private static BoardDTO toDTO(Board board) {
-        return new BoardDTO(board.getId(), board.getTitle(), board.getDescription());
+    @PostMapping
+    public ResponseEntity<BoardResponse> createBoard(@Valid @RequestBody CreateBoardRequest request) {
+        BoardResponse createdBoard = boardService.createBoard(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(createdBoard);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BoardResponse> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateBoardRequest request
+    ) {
+        return ResponseEntity.ok(boardService.updateBoardById(id, request));
     }
 }
