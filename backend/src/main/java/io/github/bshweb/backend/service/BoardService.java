@@ -40,7 +40,7 @@ public class BoardService {
         return boardMapper.toResponse(savedBoard);
     }
 
-    public BoardResponse updateBoardById(UUID id, UpdateBoardRequest request) {
+    public BoardResponse updateBoard(UUID id, UpdateBoardRequest request) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
 

@@ -26,12 +26,16 @@ public class BoardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardResponse> getBoardById(@PathVariable UUID id) {
+    public ResponseEntity<BoardResponse> getBoardById(
+            @PathVariable UUID id
+    ) {
         return ResponseEntity.ok(boardService.getBoardById(id));
     }
 
     @PostMapping
-    public ResponseEntity<BoardResponse> createBoard(@Valid @RequestBody CreateBoardRequest request) {
+    public ResponseEntity<BoardResponse> createBoard(
+            @Valid @RequestBody CreateBoardRequest request
+    ) {
         BoardResponse createdBoard = boardService.createBoard(request);
 
         return ResponseEntity
@@ -40,10 +44,10 @@ public class BoardController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BoardResponse> update(
+    public ResponseEntity<BoardResponse> updateBoard(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateBoardRequest request
     ) {
-        return ResponseEntity.ok(boardService.updateBoardById(id, request));
+        return ResponseEntity.ok(boardService.updateBoard(id, request));
     }
 }
