@@ -12,7 +12,10 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tasks")
+@Table(name = "tasks",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "uk_task_stage_position", columnNames = {"stage_id", "position"})
+    })
 @NoArgsConstructor
 @Getter
 @Setter
@@ -34,7 +37,7 @@ public class Task {
     @NotNull
     @PositiveOrZero
     @Column(nullable = false)
-    private Integer position;
+    private Long position;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "stage_id", nullable = false)

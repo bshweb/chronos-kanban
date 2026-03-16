@@ -1,6 +1,7 @@
 package io.github.bshweb.backend.controller;
 
-import io.github.bshweb.backend.dto.board.BoardResponse;
+import io.github.bshweb.backend.dto.board.BoardDetailsResponse;
+import io.github.bshweb.backend.dto.board.BoardSummaryResponse;
 import io.github.bshweb.backend.dto.board.CreateBoardRequest;
 import io.github.bshweb.backend.dto.board.UpdateBoardRequest;
 import io.github.bshweb.backend.service.BoardService;
@@ -21,22 +22,22 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping
-    public ResponseEntity<List<BoardResponse>> getAllBoards() {
+    public ResponseEntity<List<BoardSummaryResponse>> getAllBoards() {
         return ResponseEntity.ok(boardService.getAllBoards());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardResponse> getBoardById(
+    public ResponseEntity<BoardDetailsResponse> getBoardWithStagesAndTasksById(
             @PathVariable UUID id
     ) {
-        return ResponseEntity.ok(boardService.getBoardById(id));
+        return ResponseEntity.ok(boardService.getBoardWithStagesAndTasksById(id));
     }
 
     @PostMapping
-    public ResponseEntity<BoardResponse> createBoard(
+    public ResponseEntity<BoardSummaryResponse> createBoard(
             @Valid @RequestBody CreateBoardRequest request
     ) {
-        BoardResponse createdBoard = boardService.createBoard(request);
+        BoardSummaryResponse createdBoard = boardService.createBoard(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -44,7 +45,7 @@ public class BoardController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BoardResponse> updateBoard(
+    public ResponseEntity<BoardSummaryResponse> updateBoard(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateBoardRequest request
     ) {

@@ -1,6 +1,7 @@
 package io.github.bshweb.backend.service;
 
-import io.github.bshweb.backend.dto.board.BoardResponse;
+import io.github.bshweb.backend.dto.board.BoardDetailsResponse;
+import io.github.bshweb.backend.dto.board.BoardSummaryResponse;
 import io.github.bshweb.backend.dto.board.CreateBoardRequest;
 import io.github.bshweb.backend.dto.board.UpdateBoardRequest;
 import io.github.bshweb.backend.entity.Board;
@@ -20,34 +21,34 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardMapper boardMapper;
 
-    public List<BoardResponse> getAllBoards() {
+    public List<BoardSummaryResponse> getAllBoards() {
         return boardRepository.findAll()
                 .stream()
-                .map(boardMapper::toResponse)
+                .map(boardMapper::toSummaryResponse)
                 .toList();
     }
 
-    public BoardResponse getBoardById(UUID id) {
-        Board board = boardRepository.findById(id)
+    public BoardDetailsResponse getBoardWithStagesAndTasksById(UUID id) {
+        Board board = boardRepository.findBoardWithStagesAndTasksById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
 
-        return boardMapper.toResponse(board);
+        return boardMapper.toDetailsResponse(board);
     }
 
-    public BoardResponse createBoard(CreateBoardRequest request) {
+    public BoardSummaryResponse createBoard(CreateBoardRequest request) {
         Board board = boardMapper.toEntity(request);
         Board savedBoard = boardRepository.save(board);
-        return boardMapper.toResponse(savedBoard);
+        return boardMapper.toSummaryResponse(savedBoard);
     }
 
-    public BoardResponse updateBoard(UUID id, UpdateBoardRequest request) {
+    public BoardSummaryResponse updateBoard(UUID id, UpdateBoardRequest request) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
 
         boardMapper.updateEntity(request, board);
 
         Board updatedBoard = boardRepository.save(board);
-        return boardMapper.toResponse(updatedBoard);
+        return boardMapper.toSummaryResponse(updatedBoard);
     }
 
 }

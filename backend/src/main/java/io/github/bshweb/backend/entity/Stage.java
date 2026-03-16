@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "stages")
+@Table(name = "stages",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "uk_stage_board_position", columnNames = {"board_id", "position"})
+    })
 @NoArgsConstructor
 @Getter
 @Setter
@@ -32,7 +35,7 @@ public class Stage {
     @NotNull
     @PositiveOrZero
     @Column(nullable = false)
-    private Integer position;
+    private Long position;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "board_id", nullable = false)
