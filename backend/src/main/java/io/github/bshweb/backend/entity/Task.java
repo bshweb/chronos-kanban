@@ -36,7 +36,7 @@ public class Task {
 
     @NotNull
     @PositiveOrZero
-    @Column(nullable = false)
+    @Column(nullable = false)   // TODO check(position >= 0) on db-level
     private Long position;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -33,7 +33,7 @@ public class Stage {
     private String title;
 
     @NotNull
-    @PositiveOrZero
+    @PositiveOrZero // TODO check(position >= 0) on db-level
     @Column(nullable = false)
     private Long position;
 
