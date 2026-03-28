@@ -13,16 +13,17 @@ import {
 
 import { computed, ref } from 'vue'
 
-const stages = ref([
-  'To Do 1',
-  'To Do 2',
-  'To Do 3',
-  'To Do 4',
-  'To Do 5',
-  'To Do 6',
-  'To Do 7',
-  'To Do 8',
-  'To Do 9',
+const stages = ref<Stage[]>([
+  { id: 'todo-1', title: 'To Do 1', order: null },
+  { id: 'todo-2', title: 'To Do 2', order: null },
+  { id: 'todo-3', title: 'To Do 3', order: null },
+  { id: 'todo-4', title: 'To Do 4', order: null },
+  { id: 'todo-5', title: 'To Do 5', order: null },
+  { id: 'todo-6', title: 'To Do 6', order: null },
+  { id: 'todo-7', title: 'To Do 7', order: null },
+  { id: 'todo-8', title: 'To Do 8', order: null },
+  { id: 'todo-9', title: 'To Do 9', order: null },
+  { id: 'todo-10', title: 'To Do 10', order: null },
 ])
 
 const isCentered = computed(() => stages.value.length <= 6)
@@ -63,10 +64,10 @@ const isCentered = computed(() => stages.value.length <= 6)
         </BCol>
       </BRow>
 
-      <div class="board-wrapper flex-grow-1">
-        <div class="board-stages" :class="{ centered: isCentered }">
+      <div class="board-wrapper">
+        <div class="board-stages" :class="{ 'is-centered': isCentered }">
           <div class="stage-column" v-for="(stage, index) in stages" :key="index">
-            <BCard class="h-100 my-card">
+            <BCard class="stage-card">
               <div class="d-flex align-items-center px-3 pb-2 border-bottom">
                 <h5 class="mb-0 me-2">{{ stage }}</h5>
                 <BBadge pill>12</BBadge>
@@ -89,7 +90,7 @@ const isCentered = computed(() => stages.value.length <= 6)
 
 <style scoped>
 .board-wrapper {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   overflow-x: auto;
   overflow-y: hidden;
@@ -103,13 +104,12 @@ const isCentered = computed(() => stages.value.length <= 6)
   padding-bottom: 0.5rem;
 }
 
-.board-stages.centered {
+.board-stages.is-centered {
   justify-content: center;
 }
 
 .stage-column {
   flex: 0 0 350px;
-  height: 100%;
 }
 
 .stage-body {
@@ -118,8 +118,9 @@ const isCentered = computed(() => stages.value.length <= 6)
   height: calc(100vh - 280px);
 }
 
-.my-card {
+.stage-card {
+  height: 100%;
   --bs-card-spacer-y: 0.5rem;
-  --bs-card-spacer-x: 0.2rem;
+  --bs-card-spacer-x: 0.25rem;
 }
 </style>
