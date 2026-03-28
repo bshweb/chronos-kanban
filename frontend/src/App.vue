@@ -13,6 +13,12 @@ import {
 
 import { computed, ref } from 'vue'
 
+interface Stage {
+  id: string
+  title: string
+  order: number | null
+}
+
 const stages = ref<Stage[]>([
   { id: 'todo-1', title: 'To Do 1', order: null },
   { id: 'todo-2', title: 'To Do 2', order: null },
