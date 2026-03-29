@@ -5,9 +5,7 @@ import BoardView from '@/components/board/BoardView.vue'
 <template>
   <div class="page">
     <header class="flex justify-center">Header placeholder</header>
-    <main class="flex flex-1">
-      <BoardView />
-    </main>
+    <BoardView />
     <footer class="flex justify-center">Footer placeholder</footer>
   </div>
 </template>
