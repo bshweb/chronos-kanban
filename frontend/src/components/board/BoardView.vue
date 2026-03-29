@@ -19,19 +19,19 @@
         v-for="(stage, index) in 4"
         :key="index"
       >
-        <div class="board-page-stage-title flex items-center shrink-0">
+        <div class="board-page-stage-title flex items-center shrink-0 rounded-xl p-2 mx-2 my-1">
           <span>⋮⋮</span>
           <span>To Do {{ stage }}</span>
           <span>12</span>
         </div>
         <div class="board-page-stage-tasks flex flex-col flex-1 min-h-0 overflow-y-auto">
           <div
-            class="board-page-stage-task rounded-xl bg-(--color-surface-2) p-2 mx-2 my-1"
+            class="board-page-stage-task rounded-xl bg-(--color-surface-2) p-2 mx-2 my-1 wrap-break-word"
             v-for="(task, index) in 120"
             :key="index"
           >
             <span>⋮⋮</span>
-            <span>Do thing {{ task }}</span>
+            <span>Do thingfdsfdsafdsafdsafdsafasfsdafsdaffsadfasdfasdfsdafasdfsda {{ task }}</span>
           </div>
         </div>
       </div>
