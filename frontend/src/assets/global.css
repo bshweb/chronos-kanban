@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+:root {
+    --color-bg: #1e1e2e;
+    --color-surface: #1f2937;
+    --color-surface-2: #111827;
+    --color-border: #374151;
+    --color-text: #ffffff;
+    --color-text-muted: #9ca3af;
+    --color-text-soft: #6b7280;
+
+    --color-purple: #8b5cf6;
+    --color-purple-hover: #7c3aed;
+    --color-blue: #2563eb;
+    --color-blue-hover: #1d4ed8;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
