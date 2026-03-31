@@ -30,7 +30,7 @@ const stages = ref<Stage[]>([
 
 const boardRefDnd = ref()
 useDraggable(boardRefDnd, stages, {
-  animation: 150,
+  animation: 300,
   draggable: '.board-page-stage',
   direction: 'horizontal',
   scroll: true,
@@ -40,6 +40,12 @@ useDraggable(boardRefDnd, stages, {
   ghostClass: 'ghost',
   forceFallback: true,
   fallbackOnBody: true,
+  onStart() {
+    document.body.classList.add('is-dragging')
+  },
+  onEnd() {
+    document.body.classList.remove('is-dragging')
+  },
 })
 </script>
 
@@ -92,9 +98,4 @@ useDraggable(boardRefDnd, stages, {
   </div>
 </template>
 
-<style scoped>
-.ghost {
-  opacity: 0.5;
-  background: var(--color-border);
-}
-</style>
+<style scoped></style>
