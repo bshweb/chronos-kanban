@@ -16,6 +16,7 @@ import java.util.UUID;
 public class StageService {
 
     // TODO Custom Exceptions
+    // TODO check that prevStage and nextStage are the direct neighbors
 
     private final StageRepository stageRepository;
     private final PositionManager positionManager;
@@ -60,9 +61,6 @@ public class StageService {
         }
 
         if (prevStage != null && nextStage != null) {
-
-            // TODO check that prevStage and nextStage are the direct neighbors
-
             if (prevStage.getId().equals(nextStage.getId())) {
                 throw new IllegalArgumentException("Prev and Next stages must be different");
             }
@@ -77,43 +75,63 @@ public class StageService {
 
         // If there are no other stages
         if (prevStage == null && nextStage == null) {
+            // TODO check that the repo is empty
             return positionManager.initialPosition();
         }
 
         // If the stage was moved to the last position
         if (prevStage != null && nextStage == null) {
-
             if (positionManager.canAppendAfter(prevStage.getPosition())) {
-                return positionManager.newLast(prevStage.getPosition());
+                long candidate = positionManager.newLast(prevStage.getPosition());
+                if (positionManager.isValidLastPosition(candidate, prevStage.getPosition())) {
+                    return candidate;
+                }
             }
 
-            // If the new last position does cause an overflow
+            // If there is no room at the end
             rebalance(boardId);
 
             Stage refreshedPrev = stageRepository.findByIdAndBoardId(prevStage.getId(), boardId)
                     .orElseThrow(() -> new IllegalStateException("Prev stage disappeared after rebalance"));
 
+            // If there is still no room at the end after rebalance
             if (!positionManager.canAppendAfter(refreshedPrev.getPosition())) {
                 throw new IllegalStateException("Unable to allocate position after last stage");
             }
 
-            return positionManager.newLast(refreshedPrev.getPosition());
+            long candidate = positionManager.newLast(refreshedPrev.getPosition());
+
+            if (!positionManager.isValidLastPosition(candidate, refreshedPrev.getPosition())) {
+                throw new IllegalStateException("Unable to allocate valid position after last stage");
+            }
+
+            return candidate;
         }
 
         // If the stage was moved to the first position
         if (prevStage == null) {
-            long candidate = positionManager.newFirst(nextStage.getPosition());
-
-            if (!positionManager.isValidFirstPosition(candidate, nextStage.getPosition())) {
-                rebalance(boardId);
-                Stage refreshedNext = stageRepository.findByIdAndBoardId(nextStage.getId(), boardId)
-                        .orElseThrow(() -> new IllegalStateException("Next stage disappeared after rebalance"));
-
-                candidate = positionManager.newFirst(refreshedNext.getPosition());
-
-                if (!positionManager.isValidFirstPosition(candidate, refreshedNext.getPosition())) {
-                    throw new IllegalStateException("Unable to allocate position before first stage");
+            if (positionManager.canPrependBefore(nextStage.getPosition())) {
+                long candidate = positionManager.newFirst(nextStage.getPosition());
+                if (positionManager.isValidFirstPosition(candidate, nextStage.getPosition())) {
+                    return candidate;
                 }
+            }
+
+            // If there is no room at the start
+            rebalance(boardId);
+
+            Stage refreshedNext = stageRepository.findByIdAndBoardId(nextStage.getId(), boardId)
+                    .orElseThrow(() -> new IllegalStateException("Next stage disappeared after rebalance"));
+
+            // If there is still no room at the start after rebalance
+            if (!positionManager.canPrependBefore(refreshedNext.getPosition())) {
+                throw new IllegalStateException("Unable to allocate position before first stage");
+            }
+
+            long candidate = positionManager.newFirst(refreshedNext.getPosition());
+
+            if (!positionManager.isValidFirstPosition(candidate, refreshedNext.getPosition())) {
+                throw new IllegalStateException("Unable to allocate position before first stage");
             }
 
             return candidate;
@@ -125,22 +143,20 @@ public class StageService {
 
             Stage refreshedPrev = stageRepository.findByIdAndBoardId(prevStage.getId(), boardId)
                     .orElseThrow(() -> new IllegalStateException("Prev stage disappeared after rebalance"));
+
             Stage refreshedNext = stageRepository.findByIdAndBoardId(nextStage.getId(), boardId)
                     .orElseThrow(() -> new IllegalStateException("Next stage disappeared after rebalance"));
 
             long candidate = positionManager.between(refreshedPrev.getPosition(), refreshedNext.getPosition());
 
-            if (!positionManager.isValidBetweenPosition(
-                    candidate,
-                    refreshedPrev.getPosition(),
-                    refreshedNext.getPosition()
-            )) {
+            if (!positionManager.isValidBetweenPosition(candidate, refreshedPrev.getPosition(), refreshedNext.getPosition())) {
                 throw new IllegalStateException("Unable to allocate position between stages after rebalance");
             }
 
             return candidate;
         }
 
+        // Else
         long candidate = positionManager.between(prevStage.getPosition(), nextStage.getPosition());
 
         if (!positionManager.isValidBetweenPosition(candidate, prevStage.getPosition(), nextStage.getPosition())) {
@@ -153,10 +169,9 @@ public class StageService {
     private void rebalance(UUID boardId) {
         List<Stage> stages = stageRepository.findAllByBoardIdOrderByPositionAsc(boardId);
 
-        long position = positionManager.initialPosition();
-        for (Stage stage : stages) {
-            stage.setPosition(position);
-            position = positionManager.newLast(position);
+        long totalCount = stages.size();
+        for (int i = 0; i < stages.size(); i++) {
+            stages.get(i).setPosition(positionManager.rebalanceValue(i, totalCount));
         }
     }
 }

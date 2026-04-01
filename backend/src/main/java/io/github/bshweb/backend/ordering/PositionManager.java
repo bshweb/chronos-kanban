@@ -5,37 +5,59 @@ import org.springframework.stereotype.Component;
 @Component
 public class PositionManager {
 
-    public static final long POSITION_STEP = 65536L;
+    public static final long MIN_POSITION = 0L;
+    public static final long MAX_POSITION = Long.MAX_VALUE;
 
     public long initialPosition() {
-        return POSITION_STEP;
+        return midpoint(MIN_POSITION, MAX_POSITION);
     }
 
     public long newLast(long lastPosition) {
-        return Math.addExact(lastPosition, POSITION_STEP);
+        return midpoint(lastPosition, MAX_POSITION);
     }
 
     public long newFirst(long firstPosition) {
-        return firstPosition / 2;
+        return midpoint(MIN_POSITION, firstPosition);
     }
 
     public long between(long prev, long next) {
-        return prev + (next - prev) / 2;    // Instead of the simpler (prev + next) / 2 to avoid possible overflow
+        return midpoint(prev, next);
     }
 
     public boolean hasGapBetween(long prev, long next) {
-        return next - prev > 1;
+        return next > prev && next - prev > 1;
     }
 
     public boolean canAppendAfter(long lastPosition) {
-        return lastPosition <= Long.MAX_VALUE - POSITION_STEP;
+        return hasGapBetween(lastPosition, MAX_POSITION);
+    }
+
+    public boolean canPrependBefore(long firstPosition) {
+        return hasGapBetween(MIN_POSITION, firstPosition);
     }
 
     public boolean isValidFirstPosition(long candidate, long firstPosition) {
-        return candidate >= 0 && candidate < firstPosition;
+        return isValidBetweenPosition(candidate, MIN_POSITION, firstPosition);
+    }
+
+    public boolean isValidLastPosition(long candidate, long lastPosition) {
+        return isValidBetweenPosition(candidate, lastPosition, MAX_POSITION);
     }
 
     public boolean isValidBetweenPosition(long candidate, long prev, long next) {
         return candidate > prev && candidate < next;
+    }
+
+    public long rebalanceValue(long index, long totalCount) {
+        if (totalCount <= 0) {
+            throw new IllegalArgumentException("totalCount must be positive");
+        }
+
+        long step = MAX_POSITION / (totalCount + 1);
+        return step * (index + 1);
+    }
+
+    private long midpoint(long prev, long next) {
+        return prev + (next - prev) / 2; // Instead of the simpler (prev + next) / 2 to avoid possible overflow
     }
 }
