@@ -14,9 +14,8 @@ public interface BoardRepository extends JpaRepository<Board, UUID> {
     @Query("""
         select distinct b
         from Board b
-        left join fetch b.stages s
-        left join fetch s.tasks
+        left join fetch b.stages
         where b.id = :id
     """)
-    Optional<Board> findBoardWithStagesAndTasksById(@Param("id") UUID id);
+    Optional<Board> findBoardWithStagesById(@Param("id") UUID id);
 }

@@ -1,13 +1,12 @@
 package io.github.bshweb.backend.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,7 @@ public class Stage {
     private String title;
 
     @NotNull
-    @PositiveOrZero // TODO check(position >= 0) on db-level
+    @Positive // TODO check(position > 0) on db-level
     @Column(nullable = false)
     private Long position;
 
@@ -43,6 +42,7 @@ public class Stage {
 
     @OneToMany(mappedBy = "stage", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC")
+    @Fetch(FetchMode.SUBSELECT) // A solution for N+1 problem by fetching Board -> Stages -> Tasks
     private List<Task> tasks = new ArrayList<>();
 
     /**

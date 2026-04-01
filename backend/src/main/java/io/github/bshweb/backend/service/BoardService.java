@@ -10,6 +10,7 @@ import io.github.bshweb.backend.repository.BoardRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,8 +29,9 @@ public class BoardService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public BoardDetailsResponse getBoardWithStagesAndTasksById(UUID id) {
-        Board board = boardRepository.findBoardWithStagesAndTasksById(id)
+        Board board = boardRepository.findBoardWithStagesById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
 
         return boardMapper.toDetailsResponse(board);

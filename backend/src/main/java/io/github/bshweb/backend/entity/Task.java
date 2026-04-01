@@ -1,10 +1,7 @@
 package io.github.bshweb.backend.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,8 +32,8 @@ public class Task {
     private String description;
 
     @NotNull
-    @PositiveOrZero
-    @Column(nullable = false)   // TODO check(position >= 0) on db-level
+    @Positive
+    @Column(nullable = false)   // TODO check(position > 0) on db-level
     private Long position;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
