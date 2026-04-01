@@ -42,6 +42,7 @@ public class Stage {
     private Board board;
 
     @OneToMany(mappedBy = "stage", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("position ASC")
     private List<Task> tasks = new ArrayList<>();
 
     /**
