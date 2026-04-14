@@ -38,7 +38,6 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    padding: 0.25rem 0.5rem;
     background-color: var(--color-bg);
     color: var(--color-text);
     overflow-y: hidden;

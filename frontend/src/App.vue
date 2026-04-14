@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import BoardView from '@/components/board/BoardView.vue'
+import BoardView from '@/views/BoardView.vue'
 </script>
 
 <template>
   <div class="page">
     <header class="flex justify-center">Header placeholder</header>
-    <BoardView />
+    <BoardView class="px-2 py-1" />
     <footer class="flex justify-center">Footer placeholder</footer>
   </div>
 </template>
