@@ -39,33 +39,51 @@ export const useBoardStore = defineStore('board', () => {
     prevStageId: string | null,
     nextStageId: string | null,
   ) => {
-    await moveStage(board.id, stageId, prevStageId, nextStageId)
-    await fetchBoard(board.id)
+    try {
+      await moveStage(board.id, stageId, prevStageId, nextStageId)
+    } finally {
+      await fetchBoard(board.id)
+    }
   }
 
   const findStageById = (stageId: string) => {
     return board.stages.find((stage) => stage.id === stageId) ?? null
   }
 
-  // const moveTask = async (
-  //   boardId: string,
-  //   taskId: string,
-  //   targetStageId: string,
-  //   prevTaskId: string | null,
-  //   nextTaskId: string | null,
-  // ) => {
-  //   await api.patch(`/boards/${boardId}/tasks/${taskId}/move`, {
-  //     targetStageId,
-  //     prevTaskId,
-  //     nextTaskId,
-  //   })
-  // }
+  const moveTask = async (
+    boardId: string,
+    taskId: string,
+    targetStageId: string,
+    prevTaskId: string | null,
+    nextTaskId: string | null,
+  ) => {
+    await api.patch(`/boards/${boardId}/tasks/${taskId}/move`, {
+      targetStageId,
+      prevTaskId,
+      nextTaskId,
+    })
+  }
+
+  const persistTaskMove = async (
+    taskId: string,
+    targetStageId: string,
+    prevTaskId: string | null,
+    nextTaskId: string | null,
+  ) => {
+    try {
+      await moveTask(board.id, taskId, targetStageId, prevTaskId, nextTaskId)
+    } finally {
+      await fetchBoard(board.id)
+    }
+  }
 
   return {
     board,
     fetchBoard,
     moveStage,
     persistStageMove,
+    moveTask,
+    persistTaskMove,
     findStageById,
   }
 })

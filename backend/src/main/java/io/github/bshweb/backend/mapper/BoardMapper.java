@@ -11,6 +11,7 @@ import io.github.bshweb.backend.entity.Stage;
 import io.github.bshweb.backend.entity.Task;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -51,13 +52,13 @@ public class BoardMapper {
 
     private StageDetailsResponse toStageDetailsResponse(Stage stage) {
         List<TaskDetailsResponse> taskResponses = stage.getTasks().stream()
+                .sorted(Comparator.comparing(Task::getPosition).reversed()) // Frontend gets tasks in descending order
                 .map(this::toTaskDetailsResponse)
                 .toList();
 
         return new StageDetailsResponse(
                 stage.getId(),
                 stage.getTitle(),
-                stage.getPosition(),
                 taskResponses
         );
     }
@@ -66,8 +67,7 @@ public class BoardMapper {
         return new TaskDetailsResponse(
                 task.getId(),
                 task.getTitle(),
-                task.getDescription(),
-                task.getPosition()
+                task.getDescription()
         );
     }
 }

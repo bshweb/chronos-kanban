@@ -22,6 +22,7 @@ public class StageService {
     private final PositionManager positionManager;
 
     // FIXME Fix race condition when two clients move one entity at the same time
+    // TODO add @Version to the entities
     @Transactional
     public void moveStage(UUID boardId, UUID stageId, MoveStageRequest request) {
         // Fetch the stage to be moved

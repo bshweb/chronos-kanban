@@ -8,6 +8,5 @@ import java.util.UUID;
 public record StageDetailsResponse(
     UUID id,
     String title,
-    Long position,
     List<TaskDetailsResponse> tasks
 ) {}

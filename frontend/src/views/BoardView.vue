@@ -63,7 +63,7 @@ onMounted(() => {
     <div
       id="board-page-board"
       ref="boardRefDnd"
-      class="flex w-full flex-1 min-h-0 gap-3 overflow-x-auto overflow-y-hidden"
+      class="flex w-full flex-1 min-h-0 gap-2 overflow-x-auto overflow-y-hidden"
     >
       <BoardStageColumn v-for="stage in board.stages" :key="stage.id" :stage-id="stage.id" />
       <div

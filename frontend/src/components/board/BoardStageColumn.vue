@@ -22,6 +22,24 @@ const tasksRef = computed({
 
 const taskListRef = ref<HTMLElement | null>(null)
 
+const persistCurrentTaskPosition = async (newIndex: number) => {
+  if (!stage.value) return
+
+  const movedTask = stage.value.tasks[newIndex]
+  if (!movedTask) return
+
+  // backend order reversed
+  const prevTask = stage.value.tasks[newIndex + 1] ?? null
+  const nextTask = stage.value.tasks[newIndex - 1] ?? null
+
+  await boardStore.persistTaskMove(
+    movedTask.id,
+    stage.value.id,
+    prevTask?.id ?? null,
+    nextTask?.id ?? null,
+  )
+}
+
 const draggableTasks = useDraggable(taskListRef, tasksRef, {
   animation: 300,
   draggable: '.board-page-stage-task',
@@ -37,34 +55,25 @@ const draggableTasks = useDraggable(taskListRef, tasksRef, {
   onStart() {
     document.body.classList.add('is-dragging')
   },
-  onEnd(event) {
+  onEnd() {
     document.body.classList.remove('is-dragging')
-
+  },
+  async onUpdate(event) {
     try {
       draggableTasks.pause()
 
-      if (!stage.value) return
-      if (event.oldIndex == null || event.newIndex == null) return
-      if (event.oldIndex === event.newIndex && event.from === event.to) return
+      if (event.newIndex == null) return
+      await persistCurrentTaskPosition(event.newIndex)
+    } finally {
+      draggableTasks.resume()
+    }
+  },
+  async onAdd(event) {
+    try {
+      draggableTasks.pause()
 
-      const movedTask = stage.value.tasks[event.newIndex]
-      if (!movedTask) return
-
-      const prevTask = stage.value.tasks[event.newIndex - 1] ?? null
-      const nextTask = stage.value.tasks[event.newIndex + 1] ?? null
-
-      console.log('task moved locally', {
-        taskId: movedTask.id,
-        stageId: stage.value.id,
-        prevTaskId: prevTask?.id ?? null,
-        nextTaskId: nextTask?.id ?? null,
-      })
-
-      // TODO
-      // await boardStore.moveTask(...)
-      // await boardStore.fetchBoard(boardStore.board.id)
-      // or better
-      // boardStore.persistTaskMove(...)
+      if (event.newIndex == null) return
+      await persistCurrentTaskPosition(event.newIndex)
     } finally {
       draggableTasks.resume()
     }
