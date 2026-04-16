@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:18.3
+    container_name: chronos-kanban-postgres
+    environment:
+      POSTGRES_DB: chronos_kanban
+      POSTGRES_USER: chronos
+      POSTGRES_PASSWORD: chronos
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+volumes:
+  postgres_data:
