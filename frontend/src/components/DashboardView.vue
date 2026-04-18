@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import { api } from '@/shared/api/axios.ts'
+import { api } from '@/shared/api/http.ts'
 
 interface Board {
   id: string
@@ -75,7 +75,7 @@ async function submitForm(): Promise<void> {
 
     const response = await api.post<Board>('/boards', payload)
 
-    boards.value.push(response.data)
+    boards.value.push(response.data) // Fetch data from backend instead // fetchBoards
     resetForm()
   } catch (error) {
     console.error('Failed to create board:', error)
