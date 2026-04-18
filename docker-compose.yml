@@ -19,11 +19,11 @@ services:
 
   backend:
     build:
-      context: ./Backend
+      context: ./backend
       dockerfile: Dockerfile
     container_name: chronos-kanban-backend
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/chronos_kanban
       SPRING_DATASOURCE_USERNAME: chronos
       SPRING_DATASOURCE_PASSWORD: chronos
