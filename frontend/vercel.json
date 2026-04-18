@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://chronos-kanban-backend.grayground-ce2d082c.germanywestcentral.azurecontainerapps.io/api/:path*"
+    }
+  ]
+}
