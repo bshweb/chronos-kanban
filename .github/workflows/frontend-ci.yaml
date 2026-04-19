@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  frontend-checks:
+  frontend-tests-and-build:
     runs-on: ubuntu-24.04
 
     defaults:
